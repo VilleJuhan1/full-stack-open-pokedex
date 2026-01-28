@@ -1,0 +1,18 @@
+# 11.1 Warming up
+
+In this short essay I will discuss the hypothetical situation on a web application being developed on Javascript stack by a team of 6 people. The application consists of several interoperating apps and will eventually be deployed to a Kubernetes environment. I'm basing the imagined pipeline mainly on the knowledge from Devops with Docker and Devops with Kubernetes courses from Helsinki University.
+
+While working on code on an editor, _linting_ is a valuable tool. It can be installed with the command _npm install eslint --save-dev_ for development on a JS project. On a React project it should be installed by default, depending on the creation method. Using a linter allows you to adhere to best practises, and also spot syntax errors in code. However sometimes it's a bit too restrictive and you might want to tweak the rules in the .eslintrc file.[1] On a development team, using a linter is in my opinion, a must, so that the codebase adheres to the defined standards. Linting can also be integrated into CI/CD, which I'll discuss a bit later.
+
+Testing ensures that our code, despite the changes made, adheres to what we're trying to accomplish in the end. API-tests are common for testing the backend functionalities, but for graphical interface, the web page in our use case, we want to use something like Cypress or Playwright. Building the app in our context contains atleast two parts. First we want to use _npm build_ or equal to make the production version of the code. This is necessary for example to convert Typescript to Javascript and also for our web server, ie. nginx, to understand the code.
+
+All the previous steps can be integrated into the Continuous Integration (CI) setup, which itself can be part of Github actions, Gitlab pipelines, Jenkins, Atlassian Bamboo, AWS CodePipeline or similar [2]. Both manual and automated testing should be implemented in the project. I myself have mostly used Github actions, as they're free to use on public repositories. On closed environments I've used Gitlab tools. 
+
+As the goal is to implement continues integration and deployment, the team can go with either Github or Gitlab, as we have experience on those. Especially if we're deploying to an on-premise environment, local Gitlab would be a good option. If we're deploying to cloud, either is fine. For a containerized environment our pipeline could be something like this: Actions depend on the branch that we're pushing/merging to. Development branch will test, build, containerize and deploy to a dev environment, main branch or production branch to production. The deployment can be done via actions or an API. For example we can use Argo CD to observe the repository and redeploy based on the changes made. On a Kubernetes environment this could be preferable as we'd have a GUI for observing the deployment state.
+
+In summary, there are multiple ways and tools to implement Devops, or even DevSevOps pipelines. In our very simple example, we achieve only some of the goals. Hopefully this course will give more ideas on what they could be!
+
+## References
+
+[1]: [Alek Hartzog 2021, Beginner’s Guide to Linting with VSCode + Javascript](https://ahartzog.medium.com/getting-started-with-a-linter-in-vscode-javascript-3a6f306a0a7c)
+[2]: [Buildkite 2025, Alternatives to Jenkins: The top options in 2025](https://buildkite.com/resources/ci-cd-perspectives/alternatives-to-jenkins-the-top-options-in-2025/)
