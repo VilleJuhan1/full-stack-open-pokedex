@@ -15,4 +15,6 @@ jobs:
       - name: Print time
         run: |
           date +"%A, %d %B %Y %H:%M:%S %Z"
-
+      - name: List files
+        run: |
+          ls -la
