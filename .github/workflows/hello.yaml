@@ -14,4 +14,5 @@ jobs:
           echo "Hello World!"
       - name: Print time
         run: |
-          date +"%c"
+          date +"%A, %d %B %Y %H:%M:%S %Z"
+
