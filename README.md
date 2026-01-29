@@ -4,7 +4,7 @@ This is a forked repository used for the CI/CD module of the Full stack open cou
 
 ## Progress (Maybe automated via workflow later?)
 
-[#####*****************] 5/21
+[######****************] 6/21
 
 ## Commands
 
