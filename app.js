@@ -11,7 +11,7 @@ app.get('/version', (req, res) => {
   res.send('11.11. Automated Render Pipeline') // change this string to ensure a new version deployed
 })
 
-app.get('/health', (req, res) => {
+app.get('/healthz', (req, res) => {
   res.status(200).send('ok')
 })
 
