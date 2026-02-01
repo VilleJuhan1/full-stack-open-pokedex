@@ -4,11 +4,11 @@ This is a forked repository used for the CI/CD module of the Full stack open cou
 
 ## Progress (Maybe automated via workflow later?)
 
-[##########***********] 10/21
+[###########**********] 11/21
 
 ## Render deployment (exercise 11.10)
 
-[The deployed app](https://full-stack-open-pokedex-z5ph.onrender.com) can be found here. Note: Instead of a dedicated shell script for _npm install_ and _npm build_ I integrated them to the render.yaml file using the '&&' operator which basically executes the latter command only if the former exits with code 0, in other words succeeds.
+[The deployed app](https://full-stack-open-pokedex-z5ph.onrender.com) can be found here. Note: Instead of a dedicated shell script for _npm install_ and _npm build_ I integrated them to the render.yaml file using the '&&' operator which basically executes the latter command only if the former exits with code 0 (success).
 
 ## Commands
 
