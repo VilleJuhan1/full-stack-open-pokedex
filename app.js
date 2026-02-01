@@ -14,8 +14,15 @@ app.get('/version', (req, res) => {
 })
 
 // Define a health check endpoint, which on render.com is by default /healthz
+//app.get('/healthz', (req, res) => {
+//  res.status(200).send('ok')
+//})
+
+// Test for error monitoring, ie. if deployments fails correctly
 app.get('/healthz', (req, res) => {
-  res.status(200).send('ok')
+  // eslint-disable-next-line no-constant-condition
+  if (true) throw('error...  ')
+  res.send('ok')
 })
 
 app.listen(PORT, () => {
