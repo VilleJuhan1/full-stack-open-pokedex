@@ -5,12 +5,15 @@ const app = express()
 // get the port from env variable
 const PORT = process.env.PORT || 5001
 
+// By default use the production build from 'dist' folder
 app.use(express.static('dist'))
 
+// Define a version endpoint to identify the deployed version and verify new deployments
 app.get('/version', (req, res) => {
   res.send('11.11. Automated Render Pipeline') // change this string to ensure a new version deployed
 })
 
+// Define a health check endpoint, which on render.com is by default /healthz
 app.get('/healthz', (req, res) => {
   res.status(200).send('ok')
 })
