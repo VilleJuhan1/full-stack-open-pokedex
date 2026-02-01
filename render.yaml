@@ -6,6 +6,7 @@ services:
     env: node
     branch: main
 
+    # No need for an addition shell script as we can just use the logical operator '&&' for the required two commands
     buildCommand: npm install && npm run build
     startCommand: npm start-prod
 
