@@ -1,0 +1,14 @@
+---
+# Render deployment configuration for Pokedex frontend
+services:
+  - type: web
+    name: Pokedex Render Deployment
+    env: node
+    branch: main
+
+    buildCommand: npm install && npm run build
+    startCommand: npm start-prod
+
+    envVars:
+      - key: NODE_ENV
+        value: test
