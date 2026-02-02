@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+  # 11.13. Trigger deployment, excluding conditional, also on pull requests to main branch
   pull_request:
     branches: [main]
     types: [opened, synchronize]
@@ -35,6 +36,18 @@ jobs:
       - name: Run E2E tests
         run: npm run test:e2e
 
+      # 11.14. Trigger deployment only on push events to main branch
       - name: Trigger deployment to Render.com
         if: ${{ github.event_name == 'push' }}
         run: curl ${{ secrets.RENDER_DEPLOY_URL }}
+
+  tag_release:
+    needs: [simple_deployment_pipeline]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Bump version and push tag
+        if: ${{ github.event_name == 'push' }}
+        uses: anothrNick/github-tag-action@1.75.0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          DEFAULT_BUMP: patch
