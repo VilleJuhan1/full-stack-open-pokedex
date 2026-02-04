@@ -1,5 +1,9 @@
 name: Deployment pipeline
 
+env:
+  # If commit messages contain '#skip', set CONDITION to true which is used to skip deployment and tagging
+  CONDITION: ${{ github.event.commits.*.message }} | contains('#skip')
+
 on:
   push:
     branches:
@@ -38,14 +42,15 @@ jobs:
       - name: Run E2E tests
         run: npm run test:e2e
 
-      # 11.14. Trigger deployment only on push events to main branch
+      # 11.14. Trigger deployment only on push events to main branch when condition is not met
       - name: Trigger deployment to Render.com
-        if: ${{ github.event_name == 'push' }}
+        if: ${{ github.event_name == 'push' }} && ${{ env.CONDITION != 'true' }}
         run: curl ${{ secrets.RENDER_DEPLOY_URL }}
 
   # 11.15. Automatically tag release after successful deployment
   tag_release:
     needs: [simple_deployment_pipeline]
+    if: ${{ env.CONDITION != 'true' }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4

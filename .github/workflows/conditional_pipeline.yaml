@@ -1,5 +1,8 @@
 name: Testing stuff
 
+env:
+  CONDITION: ${{ github.event.commits.*.message }} | contains('#skip')
+
 on:
   push:
     branches:
