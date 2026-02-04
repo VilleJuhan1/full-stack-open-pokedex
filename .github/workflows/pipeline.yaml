@@ -49,10 +49,12 @@ jobs:
       - name: Run E2E tests
         run: npm run test:e2e
 
+      # Trigger deployment only if the skip condition is not met (#skip not found)
       - name: Trigger deployment to Render.com
         if: github.event_name == 'push' && needs.simple_deployment_pipeline.outputs.skip != 'true'
         run: curl ${{ secrets.RENDER_DEPLOY_URL }}
 
+  # Tag a new release only if the deployment pipeline succeeded and skip condition is not met
   tag_release:
     needs: [simple_deployment_pipeline]
     if: github.event_name == 'push' && needs.simple_deployment_pipeline.outputs.skip != 'true'
