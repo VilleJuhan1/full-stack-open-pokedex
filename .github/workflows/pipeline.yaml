@@ -13,7 +13,7 @@ jobs:
   simple_deployment_pipeline:
     runs-on: ubuntu-latest
     outputs:
-      condition: ${{ env.CONDITION }}
+      condition: ${{ steps.check_skip.outputs.condition }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -23,11 +23,10 @@ jobs:
         id: check_skip
         run: |
           if [[ "${{ github.event.head_commit.message }}" == *"#skip"* ]]; then
-            echo "CONDITION=true" >> $GITHUB_ENV
+          echo "condition=true" >> $GITHUB_OUTPUT
           else
-            echo "CONDITION=false" >> $GITHUB_ENV
+          echo "condition=false" >> $GITHUB_OUTPUT
           fi
-      
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
