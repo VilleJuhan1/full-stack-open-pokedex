@@ -2,9 +2,7 @@ name: Deployment pipeline
 
 on:
   push:
-    branches:
-      - main
-  # 11.13. Trigger deployment, excluding conditional, also on pull requests to main branch
+    branches: [main]
   pull_request:
     branches: [main]
     types: [opened, synchronize]
@@ -13,20 +11,22 @@ jobs:
   simple_deployment_pipeline:
     runs-on: ubuntu-latest
     outputs:
-      condition: ${{ steps.check_skip.outputs.condition }}
+      skip: ${{ steps.check_skip.outputs.skip }}
+
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      
+
       - name: Check for skip condition
         id: check_skip
         run: |
-          if [[ "${{ github.event.head_commit.message }}" == *"#skip"* ]]; then
-          echo "condition=true" >> $GITHUB_OUTPUT
-          else
-          echo "condition=false" >> $GITHUB_OUTPUT
-          fi
+          echo "skip=${{
+            contains(github.event.head_commit.message, '#skip') ||
+            contains(github.event.pull_request.title, '#skip') ||
+            contains(github.event.pull_request.body, '#skip')
+          }}" >> $GITHUB_OUTPUT
+
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
@@ -49,23 +49,21 @@ jobs:
       - name: Run E2E tests
         run: npm run test:e2e
 
-      # 11.14. Trigger deployment only on push events to main branch when condition is not met
       - name: Trigger deployment to Render.com
-        if: ${{ github.event_name == 'push' }} && ${{ env.CONDITION != 'true' }}
+        if: github.event_name == 'push' && needs.simple_deployment_pipeline.outputs.skip != 'true'
         run: curl ${{ secrets.RENDER_DEPLOY_URL }}
 
-  # 11.15. Automatically tag release only after successful deployment
   tag_release:
     needs: [simple_deployment_pipeline]
-    if: ${{ needs.simple_deployment_pipeline.outputs.condition != 'true' }}
+    if: github.event_name == 'push' && needs.simple_deployment_pipeline.outputs.skip != 'true'
     runs-on: ubuntu-latest
+
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
       - name: Bump version and push tag
-        if: ${{ github.event_name == 'push' }}
         uses: anothrNick/github-tag-action@1.75.0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
