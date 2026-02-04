@@ -1,9 +1,5 @@
 name: Deployment pipeline
 
-env:
-  # If commit messages contain '#skip', set CONDITION to true which is used to skip deployment and tagging
-  CONDITION: ${{ github.event.commits.*.message }} | contains('#skip')
-
 on:
   push:
     branches:
@@ -20,6 +16,16 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
+      
+      - name: Check for skip condition
+        id: check_skip
+        run: |
+          if [[ "${{ github.event.head_commit.message }}" == *"#skip"* ]]; then
+            echo "CONDITION=true" >> $GITHUB_ENV
+          else
+            echo "CONDITION=false" >> $GITHUB_ENV
+          fi
+      
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
