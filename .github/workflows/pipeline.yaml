@@ -2,7 +2,7 @@ name: Deployment pipeline
 
 on:
   push:
-    branches: [main]
+    branches: [testi]
   pull_request:
     branches: [main]
     types: [opened, synchronize]
