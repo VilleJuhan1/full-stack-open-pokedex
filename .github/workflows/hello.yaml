@@ -3,7 +3,7 @@ name: Hello World!
 on:
   push:
     branches:
-      - main
+      - hello #switched to 'hello' branch so it won't trigger on main
 
 jobs:
   hello_world_job:
