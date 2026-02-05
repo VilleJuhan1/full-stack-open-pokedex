@@ -5,6 +5,10 @@ on:
     branches: [testi]
   pull_request:
     branches: [main]
+    # Documentation: GitHub webhook event types for pull_request trigger
+    # - opened: Triggered when a pull request is opened
+    # - synchronize: Triggered when a pull request is updated with new commits (e.g., when changes are pushed to the PR branch)
+    # These types ensure the workflow runs both when a PR is created and when it receives new commits
     types: [opened, synchronize]
 
 jobs:
