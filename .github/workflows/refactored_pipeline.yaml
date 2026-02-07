@@ -1,4 +1,4 @@
-name: Deployment pipeline
+name: Test and deployment pipeline
 
 on:
   push:
@@ -26,7 +26,7 @@ jobs:
       # Check for skip condition in the commit message
       - name: Check for skip condition
         id: check_skip
-        run: echo "skip=${{ contains(toLower(github.event.head_commit.message), '#skip') }}" >> $GITHUB_OUTPUT
+        run: echo "skip=${{ contains(github.event.head_commit.message), '#skip' }}" >> $GITHUB_OUTPUT
 
   # Tests should be run always
   run_tests:
