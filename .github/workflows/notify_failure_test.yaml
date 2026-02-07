@@ -1,0 +1,57 @@
+name: Test notify
+
+on:
+  push:
+    branches: [dev]
+
+jobs:
+  run_tests:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Mock test - passing
+        run: echo "Tests passed successfully"
+
+  deploy_to_render:
+    needs: [run_tests]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Mock deployment - failing
+        run: |
+          echo "Attempting to deploy..."
+          exit 1
+
+  tag_release:
+    needs: [deploy_to_render]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Mock tagging
+        run: echo "This won't run because deploy_to_render failed"
+
+  notify_failure:
+    needs: [run_tests, deploy_to_render, tag_release]
+    if: failure()
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Build a failure summary
+        id: failure_summary
+        run: |
+          FAILED_JOBS=""
+          [[ "${{ needs.run_tests.result }}" == "failure" ]] && FAILED_JOBS+="run_tests "
+          [[ "${{ needs.deploy_to_render.result }}" == "failure" ]] && FAILED_JOBS+="deploy_to_render "
+          [[ "${{ needs.tag_release.result }}" == "failure" ]] && FAILED_JOBS+="tag_release "
+          echo "failed_jobs=${FAILED_JOBS}" >> $GITHUB_OUTPUT
+          
+      - name: Notify on failed deployment to Discord
+        uses: stegzilla/discord-notify@v2
+        with:
+          webhook_url: ${{ secrets.DISCORD_WEBHOOK }}
+          username: '${{ secrets.DISCORD_USERNAME }}'
+          title: Deployment failed!
+          message: |
+            The following jobs failed:
+            ${{ steps.failure_summary.outputs.failed_jobs }}
+
+            View logs:
+            https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          colour: '#FF0000'
