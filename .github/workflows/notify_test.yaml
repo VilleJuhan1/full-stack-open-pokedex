@@ -4,9 +4,7 @@ on:
   push:
     branches: [dev]
 
-  notify_release:
-    needs: [tag_release]
-    if: ${{ success() }}
+  notify_release_test:
     runs-on: ubuntu-latest
 
     steps:
