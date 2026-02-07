@@ -97,8 +97,6 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - name: Notify Discord of successful deployment
-      - uses: actions/checkout@v2
 
       - name: Run Discord Webhook
         uses: rjstone/discord-webhook-notify@v2
