@@ -6,7 +6,7 @@ on:
       - health
 
 jobs:
-  - name: Health check
+  health_check:
     runs-on: ubuntu-latest
 
     steps:
