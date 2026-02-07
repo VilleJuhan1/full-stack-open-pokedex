@@ -1,18 +1,19 @@
-name: Old deployment pipeline
+name: Deployment pipeline
 
-# don't trigger for now o anything
 on:
   push:
     # Trigger the workflow on pushes to the main branch (or merges to main as direct push is forbidden)
-    branches:
+    branches: [main]
   pull_request:
-    branches:
+    branches: [main]
     # - opened: Triggered when a pull request is opened
     # - synchronize: Triggered when a pull request is updated with new commits (e.g., when changes are pushed to the PR branch)
     types: [opened, synchronize]
 
 jobs:
-  simple_deployment_pipeline:
+  # We want to trigger deployment and tagging only when pushing (merge to main) && the condition is met (#skip not found), but we want to run tests also for PRs, so we need to split the jobs and use needs and outputs to control the flow
+  check_skip_condition:
+    if: github.event_name == 'push'
     runs-on: ubuntu-latest
     outputs:
       skip: ${{ steps.check_skip.outputs.skip }}
@@ -22,14 +23,18 @@ jobs:
         with:
           fetch-depth: 0
 
+      # Check for skip condition in the commit message
       - name: Check for skip condition
         id: check_skip
-        run: |
-          echo "skip=${{
-            contains(github.event.head_commit.message, '#skip') ||
-            contains(github.event.pull_request.title, '#skip') ||
-            contains(github.event.pull_request.body, '#skip')
-          }}" >> $GITHUB_OUTPUT
+        run: echo "skip=${{ contains(toLower(github.event.head_commit.message), '#skip') }}" >> $GITHUB_OUTPUT
+
+  # Tests should be run always
+  run_tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - uses: actions/setup-node@v4
         with:
@@ -53,15 +58,22 @@ jobs:
       - name: Run E2E tests
         run: npm run test:e2e
 
-      # Trigger deployment only if the skip condition is not met (#skip not found)
+  # Trigger deployment only if the skip condition is not met (#skip not found) and it's a push event (not PR)
+  deploy_to_render:
+    needs: [check_skip_condition, run_tests]
+    if: github.event_name == 'push' && needs.check_skip_condition.outputs.skip != 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
       - name: Trigger deployment to Render.com
-        if: github.event_name == 'push' && needs.simple_deployment_pipeline.outputs.skip != 'true'
         run: curl ${{ secrets.RENDER_DEPLOY_URL }}
 
-  # Tag a new release only if the deployment pipeline succeeded and skip condition is not met
+  # Tag a new release only if the app is deployed successfully via the pipeline
   tag_release:
-    needs: [simple_deployment_pipeline]
-    if: github.event_name == 'push' && needs.simple_deployment_pipeline.outputs.skip != 'true'
+    needs: [deploy_to_render]
     runs-on: ubuntu-latest
 
     steps:
