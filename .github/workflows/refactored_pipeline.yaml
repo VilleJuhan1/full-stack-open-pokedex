@@ -101,4 +101,4 @@ jobs:
           username: '${{ secrets.DISCORD_USERNAME }}'
           title: New version deployed!
           message: A new version of the Pokedex app has been deployed successfully.
-          color: '#00FF00' # Green color for success
+          colour: '#00FF00' # Green color for success

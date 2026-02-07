@@ -1,0 +1,20 @@
+name: Test notify
+
+on:
+  push:
+    branches: [dev]
+
+  notify_release:
+    needs: [tag_release]
+    if: ${{ success() }}
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Notify succesfull deployment to Discord
+        uses: stegzilla/discord-notify@v2
+        with:
+          webhook_url: ${{ secrets.DISCORD_WEBHOOK }}
+          username: '${{ secrets.DISCORD_USERNAME }}'
+          title: New version deployed!
+          message: A new version of the Pokedex app has been deployed successfully.
+          colour: '#00FF00' # Green color for success
