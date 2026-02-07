@@ -5,10 +5,8 @@ on:
     branches: [testi]
   pull_request:
     branches: [main]
-    # Documentation: GitHub webhook event types for pull_request trigger
     # - opened: Triggered when a pull request is opened
     # - synchronize: Triggered when a pull request is updated with new commits (e.g., when changes are pushed to the PR branch)
-    # These types ensure the workflow runs both when a PR is created and when it receives new commits
     types: [opened, synchronize]
 
 jobs:
@@ -74,3 +72,18 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           DEFAULT_BUMP: patch
+
+  # Notify Discord of successful deployment only if everything succeeds and is not skipped
+  notify_release:
+    needs: [tag_release]
+    if: ${{ success() }}
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Notify Discord of successful deployment
+      uses: rjstone/discord-webhook-notify@v2
+      if: success()
+      with:
+          webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
+          severity: info
+          details: New version deployed!
