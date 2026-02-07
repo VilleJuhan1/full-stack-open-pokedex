@@ -94,14 +94,11 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Notify succesfull deployment to Discord
+        uses: stegzilla/discord-notify@v2
         with:
-          fetch-depth: 0
-
-      - name: Run Discord Webhook
-        uses: rjstone/discord-webhook-notify@v2
-        with:
-          webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
+          webhook_url: ${{ secrets.DISCORD_WEBHOOK }}
           username: '${{ secrets.DISCORD_USERNAME }}'
-          severity: info
-          details: New version deployed!
+          title: New version deployed!
+          message: A new version of the Pokedex app has been deployed successfully.
+          color: '#00FF00' # Green color for success
