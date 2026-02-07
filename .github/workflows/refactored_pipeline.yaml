@@ -96,8 +96,8 @@ jobs:
     steps:
     - name: Notify Discord of successful deployment
       uses: rjstone/discord-webhook-notify@v2
-      if: success()
       with:
-          webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
+          # Trying again 
+          webhookUrl: ${{ secrets.DISCORD_WEBHOOK }} # 
           severity: info
           details: New version deployed!
