@@ -1,0 +1,24 @@
+name: Pokedex app health check
+
+on:
+  schedule:
+    - cron: '0 7 * * *' # Runs at 7:00 AM UTC every day
+  push:
+    branches: [health] # Trigger on pushes to health branch for testing
+
+jobs:
+  health_check:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check if the app is healthy
+        env:
+          URL: ${{ secrets.APP_HEALTH_URL }}
+        run: |
+          RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" $URL)
+          if [ "$RESPONSE" -ne 200 ]; then
+            echo "Health check failed with status code $RESPONSE"
+            exit 1
+          else
+            echo "Health check passed with status code $RESPONSE"
+          fi
