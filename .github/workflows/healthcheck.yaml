@@ -1,9 +1,10 @@
 name: Pokedex app health check
 
 on:
+  schedule:
+    - cron: '0 7 * * *' # Runs at 7:00 AM UTC every day
   push:
-    branches:
-      - health
+    branches: [health] # Trigger on pushes to health branch for testing
 
 jobs:
   health_check:
