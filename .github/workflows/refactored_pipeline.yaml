@@ -97,10 +97,11 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - name: Notify Discord of successful deployment
+
+      - name: Run Discord Webhook
         uses: rjstone/discord-webhook-notify@v2
         with:
-            # Trying again 
-            webhookUrl: ${{ secrets.DISCORD_WEBHOOK }} # 
-            severity: info
-            details: New version deployed!
+          webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
+          username: '${{ secrets.DISCORD_USERNAME }}'
+          severity: info
+          details: New version deployed!
