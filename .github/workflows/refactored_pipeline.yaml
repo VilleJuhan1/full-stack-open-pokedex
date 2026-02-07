@@ -94,10 +94,13 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Notify Discord of successful deployment
-      uses: rjstone/discord-webhook-notify@v2
-      with:
-          # Trying again 
-          webhookUrl: ${{ secrets.DISCORD_WEBHOOK }} # 
-          severity: info
-          details: New version deployed!
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Notify Discord of successful deployment
+        uses: rjstone/discord-webhook-notify@v2
+        with:
+            # Trying again 
+            webhookUrl: ${{ secrets.DISCORD_WEBHOOK }} # 
+            severity: info
+            details: New version deployed!
