@@ -1,0 +1,23 @@
+name: Pokedex app health check
+
+on:
+  push:
+    branches:
+      - health
+
+jobs:
+  - name: Health check
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check if the app is healthy
+        env:
+          URL: ${{ secrets.APP_HEALTH_URL }}
+        run: |
+          RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" $URL)
+          if [ "$RESPONSE" -ne 200 ]; then
+            echo "Health check failed with status code $RESPONSE"
+            exit 1
+          else
+            echo "Health check passed with status code $RESPONSE"
+          fi
