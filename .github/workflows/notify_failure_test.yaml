@@ -2,7 +2,7 @@ name: Test notify
 
 on:
   push:
-    branches: [dev]
+    branches: [none] #don't trigger for now
 
 jobs:
   run_tests:

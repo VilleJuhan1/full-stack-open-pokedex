@@ -75,6 +75,8 @@ jobs:
   tag_release:
     needs: [deploy_to_render]
     runs-on: ubuntu-latest
+    outputs:
+      new_tag: ${{ steps.tag.outputs.new_tag }}
 
     steps:
       - uses: actions/checkout@v4
@@ -82,6 +84,7 @@ jobs:
           fetch-depth: 0
 
       - name: Bump version and push tag
+        id: tag
         uses: anothrNick/github-tag-action@1.75.0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -100,7 +103,9 @@ jobs:
           webhook_url: ${{ secrets.DISCORD_WEBHOOK }}
           username: '${{ secrets.DISCORD_USERNAME }}'
           title: New version deployed!
-          message: A new version of the Pokedex app has been deployed successfully.
+          message: |
+            A new version of the Pokedex app has been deployed successfully.
+            Released version: ${{ needs.tag_release.outputs.new_tag }}
           colour: '#00FF00' # Green color for success
 
   notify_failure:
