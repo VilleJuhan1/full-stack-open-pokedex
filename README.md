@@ -2,13 +2,17 @@
 
 This is a forked repository used for the CI/CD module of the Full stack open course
 
-## Progress (Maybe automated via workflow later?)
+## Progress
 
-[##################***] 18/21
+[#####################] 21/21
 
 ## Render deployment (exercise 11.10)
 
 [The deployed app](https://full-stack-open-pokedex-z5ph.onrender.com) can be found here. Note: Instead of a dedicated shell script for _npm install_ and _npm build_ I integrated them to the render.yaml file using the '&&' operator which basically executes the latter command only if the former exits with code 0 (success).
+
+## Own deployment (exercise 11.20 and 11.21)
+
+As requested, I took an earlier course project, namely the Countries app from [part 2](https://fullstackopen.com/en/part2/adding_styles_to_react_app#exercises-2-18-2-20). However I completely revamped the app and made a game out of it for guessing the flags of the countries. The repository can be found here: [The flag game](https://github.com/VilleJuhan1/Fullstack-websovelluskehitys-osa11-oma-sovellus).
 
 ## Commands
 
